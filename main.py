@@ -16,12 +16,13 @@ class dardo(pygame.sprite.Sprite):
         self.image = picture
         self.rect = self.image.get_rect()
 
-        #som
+        self.gunshot = pygame.mixer.Sound('snd/gun-gunshot.wav')
+
     def update(self):
         self.rect.center = pygame.mouse.get_pos()
 
     def tiro(self):
-        #iniciando som
+        self.gunshot.play()
 
         pygame.sprite.spritecollide(meumouse, alvogroup, True)
 
@@ -43,10 +44,11 @@ class target(pygame.sprite.Sprite):
         self.rect.center = [x,y]
     def update(self):
         t2 = time.time()
-        if t2 - t1 > 1:
+        if t2 - t1 > 1.5:
             if self in alvogroup:
                 alvogroup.remove(self)
-                Jogo.pontos -= 10
+                Jogo.pontos -= 25
+                
                 print(Jogo.pontos)
         
 
@@ -86,6 +88,9 @@ while len(alvogroup) != 1:
         alvogroup.add(alvo)
 
 
+assets = {}
+assets["score_font"] = pygame.font.Font('font/PressStart2P.ttf', 28)
+
 t1 = time.time()
 tempo_limite = 3
 #-------- TELA PRINCIPAL --------
@@ -101,7 +106,7 @@ while game:
             meumouse.tiro()            
     t2 = time.time()
     if t2 - t1 > tempo_limite:
-        tempo_limite *= 0.99
+        tempo_limite *= 0.95
         t1 = t2
         alvo = target(alvo_img)
         if pygame.sprite.spritecollideany(alvo,dardogroup) == None:
@@ -111,9 +116,16 @@ while game:
     dardogroup.update()
     alvogroup.draw(window)
     dardogroup.draw(window)
-    pygame.display.update()
+    
     
     # SCORE
     if Jogo.pontos <= 0:
         
         game = False
+
+    text_surface = assets['score_font'].render("{:08d}".format(Jogo.pontos), True, (255, 255, 255))
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (HEIGHT/2, 200)
+    window.blit(text_surface, text_rect)
+
+    pygame.display.update()
