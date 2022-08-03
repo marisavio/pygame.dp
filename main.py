@@ -34,9 +34,20 @@ class Dardo(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = picture
         self.rect = self.image.get_rect()
+<<<<<<< HEAD
     def update(self):
         self.rect.center = pygame.mouse.get_pos()
 
+=======
+
+        self.gunshot = pygame.mixer.Sound('snd/gun-gunshot.wav')
+
+    def update(self):
+        self.rect.center = pygame.mouse.get_pos()
+
+    def tiro(self):
+        self.gunshot.play()
+>>>>>>> 5b526e328222770ee686f5f781beadb21e90bcda
 
 class Target(pygame.sprite.Sprite):
     def __init__(self, picture):
@@ -84,6 +95,7 @@ class Dinamite(pygame.sprite.Sprite):
         self.ativo = True
     def update(self):
         t2 = time.time()
+<<<<<<< HEAD
         if t2 - t1 > 1.65:
             if self in dinamitegroup:
                 self.ativo = False
@@ -96,6 +108,15 @@ class Dinamite(pygame.sprite.Sprite):
                     Jogo.lives -= 1
                     Jogo.vermelho = True
                     Jogo.contador_vermelho = 25
+=======
+        if t2 - t1 > 1.5:
+            if self in alvogroup:
+                alvogroup.remove(self)
+                Jogo.pontos -= 25
+                
+                print(Jogo.pontos)
+        
+>>>>>>> 5b526e328222770ee686f5f781beadb21e90bcda
 
 
 # SET BACKGROUND
@@ -181,6 +202,9 @@ perdeu_rect = score_text.get_rect()
 # ACERTOU TEXTO
 acertou_texto = font.render("BANG", True, WHITE)
 acertou_rect = score_text.get_rect()
+
+assets = {}
+assets["score_font"] = pygame.font.Font('font/PressStart2P.ttf', 28)
 
 t1 = time.time()
 tempo_limite = 2
@@ -326,5 +350,39 @@ while running:
     pygame.display.update()
     clock.tick(FPS)
 
+<<<<<<< HEAD
 # END OF THE GAME
 pygame.quit()
+=======
+    # ----- Trata eventos
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            game = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            meumouse.tiro()            
+    t2 = time.time()
+    if t2 - t1 > tempo_limite:
+        tempo_limite *= 0.95
+        t1 = t2
+        alvo = target(alvo_img)
+        if pygame.sprite.spritecollideany(alvo,dardogroup) == None:
+            alvogroup.add(alvo)
+    window.blit(imagem_de_fundo,(0,0))
+    alvogroup.update()
+    dardogroup.update()
+    alvogroup.draw(window)
+    dardogroup.draw(window)
+    
+    
+    # SCORE
+    if Jogo.pontos <= 0:
+        
+        game = False
+
+    text_surface = assets['score_font'].render("{:08d}".format(Jogo.pontos), True, (255, 255, 255))
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (HEIGHT/2, 200)
+    window.blit(text_surface, text_rect)
+
+    pygame.display.update()
+>>>>>>> 5b526e328222770ee686f5f781beadb21e90bcda
