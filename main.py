@@ -50,6 +50,8 @@ class Target(pygame.sprite.Sprite):
         self.target_dx = random.choice([-1, 1])
         self.target_dy = random.choice([-1, 1])
 
+        self.gunshot = pygame.mixer.Sound('snd/gun-gunshot.wav')
+
     def update(self):
         self.rect.x += self.target_dx*self.target_velocity
         self.rect.y += self.target_dy*self.target_velocity
@@ -60,6 +62,7 @@ class Target(pygame.sprite.Sprite):
 
     def acertou(self):
         self.target_velocity += self.target_acceleration
+        self.gunshot.play()
         print('acertou')
         self.antigo_dx = self.target_dx
         self.antigo_dy = self.target_dy
@@ -82,6 +85,7 @@ class Dinamite(pygame.sprite.Sprite):
         print(self.rect)
         self.rect.center = [x,y]
         self.ativo = True
+        self.dinamite = pygame.mixer.Sound('snd/expl3.wav')
     def update(self):
         t2 = time.time()
         if t2 - t1 > 1.65:
@@ -91,6 +95,7 @@ class Dinamite(pygame.sprite.Sprite):
         else:
             if self.ativo:
                 if pygame.sprite.spritecollideany(target, dinamitegroup) != None:
+                    self.dinamite.play()
                     dinamitegroup.remove(self)
                     self.ativo = False
                     Jogo.lives -= 1
@@ -99,24 +104,24 @@ class Dinamite(pygame.sprite.Sprite):
 
 
 # SET BACKGROUND
-background = pygame.image.load("TARGET PRACTICE/background.jpg")
+background = pygame.image.load("PNG/background.jpg")
 background_rect = background.get_rect()
 background = pygame.transform.scale(background, (945, 600))
 background_rect.topleft = (0,0)
 
 # LOAD IMAGES
-target_image = pygame.image.load("TARGET PRACTICE/target.png")
+target_image = pygame.image.load("PNG/target.png")
 target_image = pygame.transform.scale(target_image, (80, 80))
 target_rect = target_image.get_rect()
 target_rect.center = (WINDOW_WIDTH//2, WINDOW_HEIGHT//2)
 target = Target(target_image)
 
-cross_hair_image = pygame.image.load("TARGET PRACTICE/crosshair_outline_large.png")
+cross_hair_image = pygame.image.load("PNG/crosshair_outline_large.png")
 cross_hair_image = pygame.transform.scale(cross_hair_image, (50, 50))
 cross_hair = Dardo(cross_hair_image)
 pygame.mouse.set_visible(False)
 
-dinamite_image = pygame.image.load("TARGET PRACTICE/dynamite (3).png")
+dinamite_image = pygame.image.load("PNG/dynamite (3).png")
 
 
 
@@ -137,11 +142,11 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 
 # FONTS
-font = pygame.font.Font("TARGET PRACTICE/galaxia.otf", 37)
-font2 = pygame.font.Font("TARGET PRACTICE/galaxia.otf", 100)
-font3 = pygame.font.Font("TARGET PRACTICE/galaxia.otf", 50)
-font4 = pygame.font.Font("TARGET PRACTICE/galaxia.otf", 110)
-font5 = pygame.font.Font("TARGET PRACTICE/galaxia.otf", 60)
+font = pygame.font.Font("font/galaxia.otf", 37)
+font2 = pygame.font.Font("font/galaxia.otf", 100)
+font3 = pygame.font.Font("font/galaxia.otf", 50)
+font4 = pygame.font.Font("font/galaxia.otf", 110)
+font5 = pygame.font.Font("font/galaxia.otf", 60)
 
 titulo = font3.render("TARGET MADNESS", True, WHITE)
 titulo_rect = titulo.get_rect()
@@ -200,8 +205,7 @@ while running:
         display_surface.blit(background, background_rect)
         display_surface.blit(INICIO_text, INICIO_rect)
         display_surface.blit(INICIO_text2, INICIO_rect2)
-
-
+        
 
 
         for event in pygame.event.get():
@@ -260,6 +264,8 @@ while running:
             display_surface.blit(gameover, gameover_rect)
             display_surface.blit(continue_text, continue_rect)
             pygame.display.update()
+            gameoversound = pygame.mixer.Sound('snd/Game-Over-Yeah_.wav')
+            gameoversound.play()
             paused = True 
             while paused:
                 exibir = False
